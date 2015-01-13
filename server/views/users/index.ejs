@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= title %></title>
+		<link rel='stylesheet' href = '/stylesheets/bootstrap/css/bootstrap.min.css' />
+		<script type='text/javascript' src = '/socket.io/socket.io.js'></script>
+		<script src='javascripts/jquery-1.11.2.min.js'></script>
+		<script type='text/javascript'>
+			var socket = io.connect();
+			io.emit('client_ready');
+			socket.on('info', function(msg){
+			console.log('received info event and got the following message', msg);
+			});
+		socket.emit('test', {hello: 'world' });
+		</script>
+	</head>
+	<body>
+		<div class='container'>
+			<div class='row'>
+				<% if(my_tasks.length !== 0){ %>
+				<h3>My Tasks</h3>
+				<table class='table table-striped'>
+					<thead>
+						<th>Tasks</th>
+						<th>Priority</th>
+						<th>Deadline</th>
+						<th>Created</th>
+						<th>Actions</th>
+					</thead>
+					<tbody>
+						<% for(i = 0; i < my_tasks.length; i++){ %>
+						<tr><td><%= my_tasks[i].task %></td>
+							<td><%= my_tasks[i].priority %></td>
+							<td><%= my_tasks[i].deadline %></td>
+							<td><%= my_tasks[i].created_at %></td>
+							<td><form action='/users/destroy' method='post'>
+									<input type='submit' class='btn btn-primary-sm' value='remove'>
+									<input type='hidden' name='id' value=<%= my_tasks[i]._id %>>
+								</form>
+							</td></tr>
+					<%	} %>
+					</tbody>
+				</table>
+				<% } %>
+			</div>
+			<div class='row'>
+				<h3>Add a new task</h3>
+				<form action='/users/create' method='post'>
+					<p>Task Name: <input type='text' name='task'></p>
+					<p>Priority: 
+						<select class='form-control' name='priority'>
+							<option>Select a Priority</option>
+							<option>Low</option>
+							<option>Medium</option>
+							<option>High</option>
+						</select>
+					</p>
+					<p>Deadline: <input type='date' name='deadline'></p>
+					<p><input type='submit' class='btn btn-sm-primary' value='Create'></p>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>
